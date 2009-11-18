@@ -1176,15 +1176,17 @@ sub twitter_search {
   my ($kernel, $heap, $chan) = @_[KERNEL, HEAP, ARG0];
 
   if (!$heap->{'channels'}->{$chan}->{'joined'} || !$heap->{'channels'}->{$chan}->{'topic'}) {
-    #if we aren't in the channel, don't od anythning, this will keep us from restarting timers for channels we are no longer in
+    #if we aren't in the channel, don't do anything, this will keep us from restarting timers for channels we are no longer in
     return;
   }
 
+    $kernel->post('logger','log','Searching in '.$chan.' for '.$heap->{'channels'}->{$chan}->{'topic'}." ",$heap->{'username'});
+
   my $data;
   if ($heap->{'channels'}->{$chan}->{'search_since_id'}) {
-    $data = eval {$heap->{'twitter'}->search({query => $heap->{'channels'}->{$chan}->{'topic'}, rpp => 100, since_id => $heap->{'channels'}->{$chan}->{'search_since_id'}});};
+    $data = eval {$heap->{'twitter'}->search({q => $heap->{'channels'}->{$chan}->{'topic'}, rpp => 100, since_id => $heap->{'channels'}->{$chan}->{'search_since_id'}});};
   } else {
-    $data = eval {$heap->{'twitter'}->search({query => $heap->{'channels'}->{$chan}->{'topic'}, rpp => 100});};
+    $data = eval {$heap->{'twitter'}->search({q => $heap->{'channels'}->{$chan}->{'topic'}, rpp => 100});};
   }
 
   if (!$data || $data->{'max_id'} < $heap->{'channels'}->{$chan}->{'search_since_id'} ) {
