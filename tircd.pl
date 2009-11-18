@@ -751,10 +751,14 @@ sub irc_privmsg {
 
     #Tweak the @replies
     if ($msg =~ /^(.*?)\: / && $heap->{'config'}->{'convert_irc_replies'}) {
-      my $tnick = $1;
-      if (exists $heap->{'channels'}->{'#twitter'}->{'names'}->{$tnick}) {
-        $msg =~ s/^(.*?)\: /\@$1 /;
-      }
+	my @people = $msg =~ m/(\w+?): /g;
+	my $tnick = "";
+	foreach $tnick (@people) {
+	    if (exists $heap->{'channels'}->{'#twitter'}->{'names'}->{$tnick}) {
+		$msg =~ s/$tnick: /\@$tnick /;
+	    }
+	}
+
     }
 
     #warn if asked and the message is too long after fucking with it
