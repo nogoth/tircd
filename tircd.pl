@@ -783,6 +783,11 @@ sub irc_privmsg {
     $kernel->post('logger','log','Updated status.',$heap->{'username'});
   } else {
     #private message, it's a dm
+      if ( $target =~ $heap->{'username'} ) {
+	  $kernel->post('logger','log',"Unable to send direct message to yourself, $target = $heap->{'username'}",$heap->{'username'});
+	  return;
+      }
+
     my $dm = eval { $heap->{'twitter'}->new_direct_message({user => $target, text => $msg}) };
     if (!$dm) {
       $kernel->yield('server_reply',401,$target,"Unable to send direct message.  Perhaps $target isn't following you?");
