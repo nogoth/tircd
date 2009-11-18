@@ -751,6 +751,7 @@ sub irc_privmsg {
 
     #Tweak the @replies
     if ($msg =~ /^(.*?)\: / && $heap->{'config'}->{'convert_irc_replies'}) {
+
 	my @people = $msg =~ m/(\S+?):* /g;
 	my $tnick = "";
 	foreach $tnick (@people) {
@@ -759,6 +760,11 @@ sub irc_privmsg {
 	    }
 	}
 
+	#next check to see if we didn't swab out the person since we never followed them
+	if ($msg =~ /^(.*?)\: /) {
+	    $tnick = $1;
+	    $msg =~ s/$tnick: /\@$tnick /;
+	}
     }
 
     #warn if asked and the message is too long after fucking with it
