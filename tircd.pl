@@ -751,7 +751,7 @@ sub irc_privmsg {
 
     #Tweak the @replies
     if ($msg =~ /^(.*?)\: / && $heap->{'config'}->{'convert_irc_replies'}) {
-	my @people = $msg =~ m/(\w+?):* /g;
+	my @people = $msg =~ m/(\S+?):* /g;
 	my $tnick = "";
 	foreach $tnick (@people) {
 	    if (exists $heap->{'channels'}->{'#twitter'}->{'names'}->{$tnick}) {
