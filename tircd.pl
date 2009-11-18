@@ -801,8 +801,10 @@ sub irc_privmsg {
 #allow the user to follow new users by adding them to the channel
 sub irc_invite {
   my ($kernel, $heap, $data) = @_[KERNEL, HEAP, ARG0];
-  my $target = $data->{'params'}[0];
-  my $chan = $data->{'params'}[1];
+  my ($target, $chan) = split(/\s/, $data->{'params'}[0]);
+  $chan = $chan || "#twitter";
+
+  $kernel->post('logger','log',"Invites $target to $chan",$heap->{'username'});
 
   if (!$heap->{'channels'}->{$chan}->{'joined'}) {
     $kernel->yield('server_reply',442,$chan,"You're not on that channel");
